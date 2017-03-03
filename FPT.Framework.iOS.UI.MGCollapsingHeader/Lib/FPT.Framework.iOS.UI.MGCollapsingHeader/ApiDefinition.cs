@@ -7,60 +7,97 @@ using CoreGraphics;
 
 namespace FPT.Framework.iOS.UI.MGCollapsingHeader
 {
-	// The first step to creating a binding is to add your native library ("libNativeLibrary.a")
-	// to the project by right-clicking (or Control-clicking) the folder containing this source
-	// file and clicking "Add files..." and then simply select the native library (or libraries)
-	// that you want to bind.
-	//
-	// When you do that, you'll notice that MonoDevelop generates a code-behind file for each
-	// native library which will contain a [LinkWith] attribute. MonoDevelop auto-detects the
-	// architectures that the native library supports and fills in that information for you,
-	// however, it cannot auto-detect any Frameworks or other system libraries that the
-	// native library may depend on, so you'll need to fill in that information yourself.
-	//
-	// Once you've done that, you're ready to move on to binding the API...
-	//
-	//
-	// Here is where you'd define your API definition for the native Objective-C library.
-	//
-	// For example, to bind the following Objective-C class:
-	//
-	//     @interface Widget : NSObject {
-	//     }
-	//
-	// The C# binding would look like this:
-	//
-	//     [BaseType (typeof (NSObject))]
-	//     interface Widget {
-	//     }
-	//
-	// To bind Objective-C properties, such as:
-	//
-	//     @property (nonatomic, readwrite, assign) CGPoint center;
-	//
-	// You would add a property definition in the C# interface like so:
-	//
-	//     [Export ("center")]
-	//     CGPoint Center { get; set; }
-	//
-	// To bind an Objective-C method, such as:
-	//
-	//     -(void) doSomething:(NSObject *)object atIndex:(NSInteger)index;
-	//
-	// You would add a method definition to the C# interface like so:
-	//
-	//     [Export ("doSomething:atIndex:")]
-	//     void DoSomething (NSObject object, int index);
-	//
-	// Objective-C "constructors" such as:
-	//
-	//     -(id)initWithElmo:(ElmoMuppet *)elmo;
-	//
-	// Can be bound as:
-	//
-	//     [Export ("initWithElmo:")]
-	//     IntPtr Constructor (ElmoMuppet elmo);
-	//
-	// For more information, see http://developer.xamarin.com/guides/ios/advanced_topics/binding_objective-c/
-	//
+	// @protocol MGCollapsingHeaderDelegate <NSObject>
+	[Protocol, Model]
+	[BaseType(typeof(NSObject))]
+	interface MGCollapsingHeaderDelegate
+	{
+		// @required -(void)headerDidCollapseToOffset:(double)offset;
+		[Abstract]
+		[Export("headerDidCollapseToOffset:")]
+		void HeaderDidCollapseToOffset(double offset);
+
+		// @required -(void)headerDidFinishCollapsing;
+		[Abstract]
+		[Export("headerDidFinishCollapsing")]
+		void HeaderDidFinishCollapsing();
+
+		// @required -(void)headerDidExpandToOffset:(double)offset;
+		[Abstract]
+		[Export("headerDidExpandToOffset:")]
+		void HeaderDidExpandToOffset(double offset);
+
+		// @required -(void)headerDidFinishExpanding;
+		[Abstract]
+		[Export("headerDidFinishExpanding")]
+		void HeaderDidFinishExpanding();
+	}
+
+	// @interface MGTransform : NSObject
+	[BaseType(typeof(NSObject))]
+	interface MGTransform
+	{
+		// @property (nonatomic) MGAttribute attribute;
+		[Export("attribute", ArgumentSemantic.Assign)]
+		MGAttribute Attribute { get; set; }
+
+		// @property (nonatomic) MGTransformCurve curve;
+		[Export("curve", ArgumentSemantic.Assign)]
+		MGTransformCurve Curve { get; set; }
+
+		// @property (nonatomic) CGFloat value;
+		[Export("value")]
+		nfloat Value { get; set; }
+
+		// @property (nonatomic) CGFloat origValue;
+		[Export("origValue")]
+		nfloat OrigValue { get; set; }
+
+		// +(instancetype)transformAttribute:(MGAttribute)attr byValue:(CGFloat)val;
+		[Static]
+		[Export("transformAttribute:byValue:")]
+		MGTransform TransformAttribute(MGAttribute attr, nfloat val);
+	}
+
+	// @interface MGCollapsingHeaderView : UIView
+	[BaseType(typeof(UIView))]
+	interface MGCollapsingHeaderView
+	{
+		[Wrap("WeakDelegate")]
+		MGCollapsingHeaderDelegate Delegate { get; set; }
+
+		// @property (nonatomic, strong) id<MGCollapsingHeaderDelegate> delegate;
+		[NullAllowed, Export("delegate", ArgumentSemantic.Strong)]
+		NSObject WeakDelegate { get; set; }
+
+		// @property (nonatomic) CGFloat minimumHeaderHeight;
+		[Export("minimumHeaderHeight")]
+		nfloat MinimumHeaderHeight { get; set; }
+
+		// @property (nonatomic) BOOL alwaysCollapse;
+		[Export("alwaysCollapse")]
+		bool AlwaysCollapse { get; set; }
+
+		// -(void)setCollapsingConstraint:(NSLayoutConstraint *)c;
+		[Export("setCollapsingConstraint:")]
+		void SetCollapsingConstraint(NSLayoutConstraint c);
+
+		// -(void)setCollapsingConstraints:(NSArray *)constrs;
+		[Export("setCollapsingConstraints:")]
+		//[Verify(StronglyTypedNSArray)]
+		void SetCollapsingConstraints(NSObject[] constrs);
+
+		// -(BOOL)addTransformingSubview:(UIView *)view attributes:(NSArray *)attrs;
+		[Export("addTransformingSubview:attributes:")]
+		//[Verify(StronglyTypedNSArray)]
+		bool AddTransformingSubview(UIView view, NSObject[] attrs);
+
+		// -(BOOL)addFadingSubview:(UIView *)view fadeBy:(CGFloat)ratio;
+		[Export("addFadingSubview:fadeBy:")]
+		bool AddFadingSubview(UIView view, nfloat ratio);
+
+		// -(void)collapseWithScroll:(UIScrollView *)scrollView;
+		[Export("collapseWithScroll:")]
+		void CollapseWithScroll(UIScrollView scrollView);
+	}
 }

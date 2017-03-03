@@ -2,3 +2,9 @@ MGCollapsingHeader-master
 .DS_Store
 FPT.Framework.iOS.UI.MGCollapsingHeader.userprefs
 xcuserdata
+FPT.Framework.iOS.UI.MGCollapsingHeader/Lib/FPT.Framework.iOS.UI.MGCollapsingHeader/obj
+FPT.Framework.iOS.UI.MGCollapsingHeader/Lib/FPT.Framework.iOS.UI.MGCollapsingHeader/bin
+MGCollapsingHeader/output
+MGCollapsingHeader/build
+FPT.Framework.iOS.UI.MGCollapsingHeader/Demo/Demo/obj
+FPT.Framework.iOS.UI.MGCollapsingHeader/Demo/Demo/bin
